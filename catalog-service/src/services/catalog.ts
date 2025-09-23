@@ -5,13 +5,40 @@ export class CatalogService {
     private _repository: CatalogRepository
   ) { }
 
-  createProduct(input: any) { }
+  async createProduct(input: any) {
+    const product = await this._repository.create(input)
 
-  updateProduct(input: any) { }
+    if (!product.id) {
+      throw new Error("unable to create product")
+    }
 
-  getProducts(limit: number, offset: number) { }
+    return product
+  }
 
-  getProduct(id: number) { }
+  async updateProduct(input: any) {
+    const product = await this._repository.update(input)
 
-  deleteProduct(id: number) { }
+    //TODO - emit event to update record in ElasticSearch
+
+    return product
+  }
+
+  //TODO - instead of this, implement a search function that queries ElasticSearch
+  async getProducts(limit: number, offset: number) {
+    const products = await this._repository.find(limit, offset)
+    return products
+  }
+
+  async getProduct(id: number) {
+    const product = await this._repository.findOne(id)
+    return product
+  }
+
+  async deleteProduct(id: number) {
+    const deletedId = await this._repository.delete(id)
+
+    //TODO - emit event to delete record in ElasticSearch
+
+    return deletedId
+  }
 }

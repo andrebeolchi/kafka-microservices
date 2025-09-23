@@ -1,9 +1,9 @@
-import { Product } from "../models/product";
+import { Product } from "~/models/product";
 
 export interface CatalogRepository {
   create(data: Product): Promise<Product>;
   update(data: Product): Promise<Product>;
-  delete(id: number): Promise<void>;
-  find(): Promise<Product[]>;
+  delete(id: number): Promise<number>;
+  find(limit: number, offset: number): Promise<Product[]>;
   findOne(id: number): Promise<Product>;
 }

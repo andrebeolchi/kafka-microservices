@@ -1,22 +1,13 @@
 import { faker } from '@faker-js/faker'
 
 import { Product } from "~/models/product"
+import { productFactory } from '~/utils/fixtures'
 
 import { CatalogRepository } from "~/interfaces/catalog-repository"
 
 import { MockCatalogRepository } from "~/repositories/mock-catalog"
 
 import { CatalogService } from "./catalog"
-
-import { Factory } from "rosie"
-
-const productFactory = new Factory<Product>().attrs({
-  id: () => faker.number.int({ min: 1, max: 1000 }),
-  name: () => faker.commerce.productName(),
-  description: () => faker.commerce.productDescription(),
-  price: () => +faker.commerce.price(),
-  stock: () => faker.number.int({ min: 10, max: 1000 }),
-})
 
 describe("[services] catalog", () => {
   let repository: CatalogRepository

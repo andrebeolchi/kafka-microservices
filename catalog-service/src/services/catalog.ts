@@ -18,6 +18,10 @@ export class CatalogService {
   async updateProduct(input: any) {
     const product = await this._repository.update(input)
 
+    if (!product.id) {
+      throw new Error("unable to update product")
+    }
+
     //TODO - emit event to update record in ElasticSearch
 
     return product
@@ -39,6 +43,6 @@ export class CatalogService {
 
     //TODO - emit event to delete record in ElasticSearch
 
-    return deletedId
+    return { id: deletedId }
   }
 }

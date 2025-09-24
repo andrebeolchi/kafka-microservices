@@ -124,15 +124,15 @@ describe("[services] catalog", () => {
   })
 
   describe("delete product", () => {
-    it("should delete product by id", () => {
+    it("should delete product by id", async () => {
       const service = new CatalogService(repository)
       const product = productFactory.build()
 
-      jest.spyOn(repository, "delete").mockImplementationOnce(async () => product.id!)
+      jest.spyOn(repository, "delete").mockResolvedValueOnce(product.id!)
 
-      const result = service.deleteProduct(product.id!)
+      const result = await service.deleteProduct(product.id!)
 
-      expect(result).resolves.toBe(product.id)
+      expect(result).toMatchObject({ id: product.id })
     })
 
     it("should throw an error if product does not exist", async () => {

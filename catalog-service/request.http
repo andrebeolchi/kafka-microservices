@@ -1,6 +1,28 @@
-POST http://localhost:3000/products
+@BASE_URL=http://localhost:3000
+
+### Create a new product
+POST {{BASE_URL}}/products
 Content-Type: application/json
 
 {
-  "name": "New Product"
+  "name": "New Product",
+  "description": "This is a new product",
+  "price": 19.99,
+  "stock": 100
+}
+
+### Get all products
+
+GET {{BASE_URL}}/products
+
+### Get a product by ID
+GET {{BASE_URL}}/products/1
+
+### Update a product by ID
+PATCH {{BASE_URL}}/products/1
+Content-Type: application/json
+
+{
+  "price": 24.99,
+  "stock": 80
 }

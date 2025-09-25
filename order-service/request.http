@@ -1,0 +1,20 @@
+@BASE_URL=http://localhost:3001
+
+### Health Check
+GET {{BASE_URL}}/health
+
+### Create Cart
+
+### Get Cart
+
+### Update Cart
+
+### Delete Cart
+
+### Create Order
+
+### Get Orders
+
+### Get Order by ID
+
+### Delete Order by ID

@@ -4,6 +4,14 @@
 GET {{BASE_URL}}/health
 
 ### Create Cart
+POST {{BASE_URL}}/cart
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "productId": 3,
+  "quantity": 2
+}
 
 ### Get Cart
 

@@ -1,18 +1,19 @@
 import { app as expressApp } from "./express-app"
+import { logger } from "./utils/logger"
 
 const PORT = process.env.PORT || 3000
 
 export const startServer = async () => {
   expressApp.listen(PORT, () => {
-    console.log(`Catalog service listening on port ${PORT}`)
+    logger.info(`Catalog service listening on port ${PORT}`)
   })
 
   process.on("uncaughtException", async (err) => {
-    console.error("Uncaught Exception:", err)
+    logger.error(err)
     process.exit(1)
   })
 }
 
 startServer().then(() => {
-  console.log("Server started successfully")
+  logger.info("Server started successfully")
 })

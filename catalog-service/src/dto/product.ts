@@ -24,6 +24,8 @@ export class UpdateProductRequest {
   @IsOptional()
   @IsPositive()
   price?: number;
-
+  
+  @IsOptional()
+  @IsNumber()
   stock?: number;
 }

@@ -5,10 +5,10 @@ POST {{BASE_URL}}/products
 Content-Type: application/json
 
 {
-  "name": "New Product",
-  "description": "This is a new product",
-  "price": 19.99,
-  "stock": 100
+  "name": "Product Out of Stock",
+  "description": "This product is currently out of stock",
+  "price": 0.99,
+  "stock": 0
 }
 
 ### Get all products
@@ -23,8 +23,7 @@ PATCH {{BASE_URL}}/products/2
 Content-Type: application/json
 
 {
-  "name": "Updated Product 2",
-  "description": "This is an updated product 2"
+  "stock": 50
 }
 
 ### Delete a product by ID

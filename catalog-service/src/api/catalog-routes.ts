@@ -67,19 +67,9 @@ router.get('/products/:id', async (req: Request, res: Response, next: NextFuncti
   try {
     const data = await catalogService.getProduct(id)
 
-    if (!data) {
-      return res.status(404).json({ message: 'Product not found' })
-    }
-
     return res.status(200).json(data)
   } catch (error) {
-    const err = error as Error
-
-    if (err.message.includes('not exist')) {
-      return res.status(404).json(err.message)
-    }
-
-    return res.status(500).json(err.message)
+    return next(error)
   }
 })
 

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { CatalogRepository } from "~/interfaces/catalog-repository";
 import { Product } from "~/models/product";
+import { NotFoundError } from "~/utils/error/errors";
 
 export class PrismaCatalogRepository implements CatalogRepository {
   _prisma: PrismaClient
@@ -33,7 +34,7 @@ export class PrismaCatalogRepository implements CatalogRepository {
     const product = await this._prisma.product.findUnique({ where: { id } });
     
     if (!product) {
-      throw new Error('product not found');
+      throw new NotFoundError('product not found');
     }
 
     return product;

@@ -19,10 +19,13 @@ GET {{BASE_URL}}/products
 GET {{BASE_URL}}/products/1
 
 ### Update a product by ID
-PATCH {{BASE_URL}}/products/1
+PATCH {{BASE_URL}}/products/2
 Content-Type: application/json
 
 {
-  "price": 24.99,
-  "stock": 80
+  "name": "Updated Product 2",
+  "description": "This is an updated product 2"
 }
+
+### Delete a product by ID
+DELETE {{BASE_URL}}/products/1

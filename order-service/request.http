@@ -33,6 +33,7 @@ Content-Type: application/json
 DELETE {{BASE_URL}}/cart/1
 
 ### Create Order
+POST {{BASE_URL}}/order
 
 ### Get Orders
 

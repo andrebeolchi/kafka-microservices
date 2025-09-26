@@ -1,7 +1,7 @@
 import { CartLineItem } from "~/db/schema"
 import { CartEditRequestInput, CartRequestInput } from "~/dto/cart-request"
 import { CartRepositoryType } from "~/repositories/cart"
-import { GetProductDetails } from "~/utils/broker"
+import { GetProductDetails } from "~/utils/broker/api"
 import { NotFoundError } from "~/utils/error/errors"
 import { logger } from "~/utils/logger"
 

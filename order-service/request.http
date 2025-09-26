@@ -9,15 +9,28 @@ Content-Type: application/json
 
 {
   "customerId": 1,
-  "productId": 3,
-  "quantity": 2
+  "productId": 1,
+  "quantity": 1
 }
 
 ### Get Cart
+GET {{BASE_URL}}/cart
+Content-Type: application/json
+
+{
+  "customerId": 1
+}
 
 ### Update Cart
+PATCH {{BASE_URL}}/cart/1
+Content-Type: application/json
 
-### Delete Cart
+{
+  "quantity": 3
+}
+
+### Delete Cart Item
+DELETE {{BASE_URL}}/cart/1
 
 ### Create Order
 

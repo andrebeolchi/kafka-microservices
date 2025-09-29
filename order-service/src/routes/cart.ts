@@ -1,56 +1,104 @@
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { CartRequestSchema, type CartRequestInput } from '~/dto/cart-request'
 import { CartRepository } from '~/repositories/cart'
 import { CreateCart, DeleteCart, EditCart, GetCart } from '~/services/cart'
 import { validateRequest } from '~/utils/validator'
+import { requestAuthorizer } from './middleware'
 
 const router = express.Router()
 
 const cartRepository = CartRepository
 
-const authMiddleware = (_req: Request, res: Response, next: Function) => {
-  const isValidUser = true
-  if (!isValidUser) {
-    return res.status(401).json({ error: 'unauthorized' })
-  }
+router.post(
+  '/cart',
+  requestAuthorizer,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user
+      if (!user) {
+        next(new Error('User not found in request'))
+        return
+      }
 
-  next()
-}
+      const error = validateRequest<CartRequestInput>(req.body, CartRequestSchema)
 
-router.use(authMiddleware)
+      if (error) {
+        return res.status(404).json({ error })
+      }
 
-router.post('/cart', async (req: Request, res: Response) => {
-  try {
-    const error = validateRequest<CartRequestInput>(req.body, CartRequestSchema)
+      const response = await CreateCart({ ...req.body, customerId: user.id }, cartRepository)
 
-    if (error) {
+      return res.status(200).json(response)
+    } catch (error) {
       return res.status(404).json({ error })
     }
+  })
 
-    const response = await CreateCart(req.body, cartRepository)
+router.get(
+  '/cart',
+  requestAuthorizer,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user
+      if (!user) {
+        next(new Error('User not found in request'))
+        return
+      }
 
-    return res.status(200).json(response)
-  } catch (error) {
-    return res.status(404).json({ error })
-  }
-})
+      const response = await GetCart(user.id, cartRepository)
+      return res.status(200).json(response)
+    } catch (error) {
+      return res.status(404).json({ error })
+    }
+  })
 
-router.get('/cart', async (req: Request, res: Response) => {
-  const response = await GetCart(req.body.customerId, cartRepository)
-  return res.status(200).json(response)
-})
+router.patch(
+  '/cart/:lineItemId',
+  requestAuthorizer,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user
+      if (!user) {
+        next(new Error('User not found in request'))
+        return
+      }
 
-router.patch('/cart/:lineItemId', async (req: Request, res: Response) => {
-  const lineItemId = +req.params.lineItemId
+      const lineItemId = +req.params.lineItemId
 
-  const response = await EditCart({ id: lineItemId, quantity: req.body.quantity }, cartRepository)
-  return res.status(200).json(response)
-})
+      const response = await EditCart({
+        id: lineItemId,
+        quantity: req.body.quantity,
+        customerId: user.id,
+      }, cartRepository)
 
-router.delete('/cart/:lineItemId', async (req: Request, res: Response) => {
-  const lineItemId = +req.params.lineItemId
-  const response = await DeleteCart(lineItemId, cartRepository)
-  return res.status(200).json(response)
-})
+      return res.status(200).json(response)
+    } catch (error) {
+      return res.status(404).json({ error })
+    }
+  })
+
+router.delete(
+  '/cart/:lineItemId',
+  requestAuthorizer,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user
+      if (!user) {
+        next(new Error('User not found in request'))
+        return
+      }
+
+      const lineItemId = +req.params.lineItemId
+
+      const response = await DeleteCart({
+        id: lineItemId,
+        customerId: user.id,
+      }, cartRepository)
+
+      return res.status(200).json(response)
+    } catch (error) {
+      return res.status(404).json({ error })
+    }
+  })
 
 export { router }

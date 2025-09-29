@@ -32,11 +32,19 @@ export class PrismaCatalogRepository implements CatalogRepository {
 
   async findOne(id: number): Promise<Product> {
     const product = await this._prisma.product.findUnique({ where: { id } });
-    
+
     if (!product) {
       throw new NotFoundError('product not found');
     }
 
     return product;
+  }
+
+  findStock(ids: number[]): Promise<Product[]> {
+    return this._prisma.product.findMany({
+      where: {
+        id: { in: ids }
+      }
+    });
   }
 }

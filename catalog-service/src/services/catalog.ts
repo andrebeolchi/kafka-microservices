@@ -45,4 +45,14 @@ export class CatalogService {
 
     return { id: deletedId }
   }
+
+  async getProductStock(ids: number[]) {
+    const products = await this._repository.findStock(ids)
+
+    if (!products.length) {
+      throw new Error("unable to find product stock details")
+    }
+
+    return products
+  }
 }

@@ -26,4 +26,8 @@ export class MockCatalogRepository implements CatalogRepository {
   async findOne(id: number): Promise<Product> {
     return { id } as Product
   }
+
+  async findStock(_ids: number[]): Promise<Product[]> {
+    return []
+  }
 }

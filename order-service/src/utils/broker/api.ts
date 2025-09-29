@@ -28,7 +28,7 @@ export const GetStockDetails = async (ids: number[]): Promise<Product[]> => {
 
 export const ValidateUser = async (token: string): Promise<User> => {
   try {
-    const { status, data } = await axios.get<User>(`${USER_BASE_URL}/validate`, {
+    const { status, data } = await axios.get<User>(`${USER_BASE_URL}/auth/validate`, {
       headers: {
         Authorization: token
       }

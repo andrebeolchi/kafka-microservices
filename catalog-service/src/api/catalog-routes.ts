@@ -10,6 +10,8 @@ const catalogRepository = new PrismaCatalogRepository()
 export const catalogService = new CatalogService(catalogRepository)
 
 // endpoints
+
+// Create a new product
 router.post('/products', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { errors, input } = await RequestValidator(CreateProductRequest, req.body)
@@ -28,6 +30,7 @@ router.post('/products', async (req: Request, res: Response, next: NextFunction)
 
 })
 
+// Update a product
 router.patch('/products/:id', async (req: Request, res: Response, next: NextFunction) => {
   const id = parseInt(req.params.id) || 0
 
@@ -47,6 +50,7 @@ router.patch('/products/:id', async (req: Request, res: Response, next: NextFunc
   }
 })
 
+// Get all products with pagination
 router.get('/products', async (req: Request, res: Response, next: NextFunction) => {
   const limit = Number(req.query['limit']) || 10
   const offset = Number(req.query['offset']) || 0
@@ -61,6 +65,7 @@ router.get('/products', async (req: Request, res: Response, next: NextFunction) 
   }
 })
 
+// Get a product by id
 router.get('/products/:id', async (req: Request, res: Response, next: NextFunction) => {
   const id = parseInt(req.params.id) || 0
 
@@ -73,6 +78,7 @@ router.get('/products/:id', async (req: Request, res: Response, next: NextFuncti
   }
 })
 
+// Get a product by id
 router.delete('/products/:id', async (req: Request, res: Response, next: NextFunction) => {
   const id = parseInt(req.params.id) || 0
 
@@ -87,6 +93,17 @@ router.delete('/products/:id', async (req: Request, res: Response, next: NextFun
       return res.status(404).json(err.message)
     }
 
+    return res.status(500).json(err.message)
+  }
+})
+
+// Get stock details
+router.post('/products/stock', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await catalogService.getProductStock(req.body.ids as number[])
+    return res.status(200).json(data)
+  } catch (error) {
+    const err = error as Error
     return res.status(500).json(err.message)
   }
 })

@@ -15,13 +15,13 @@ export const expressApp = async () => {
   app.use(httpLogger)
 
   const producer = await MessageBroker.connectProducer<Producer>()
-  producer.on("producer.connect", () => logger.info("Kafka Producer connected - from expressApp"))
+  producer.on("producer.connect", () => logger.debug("Kafka Producer connected - from expressApp"))
 
   const consumer = await MessageBroker.connectConsumer<Consumer>()
-  consumer.on("consumer.connect", () => logger.info("Kafka Consumer connected - from expressApp"))
+  consumer.on("consumer.connect", () => logger.debug("Kafka Consumer connected - from expressApp"))
 
   await MessageBroker.subscribe((message) => {
-    logger.info(`Consumer received message to event ${JSON.stringify(message.event)}`)
+    logger.debug(`Consumer received message to event ${JSON.stringify(message.event)}`)
   }, "OrderEvents")
 
   app.get('/health', (_req: Request, res: Response) => {

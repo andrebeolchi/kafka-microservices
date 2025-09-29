@@ -3,6 +3,7 @@ import { requestAuthorizer } from './middleware'
 import { CreateOrder, DeleteOrder, GetOrder, GetOrdersByCustomerId, UpdateOrder } from '~/services/order'
 import { OrderRepository } from '~/repositories/order'
 import { CartRepository } from '~/repositories/cart'
+import { OrderStatus } from '~/types/order'
 
 const router = express.Router()
 
@@ -56,7 +57,7 @@ router.patch('/orders/:id', async (req: Request, res: Response, next: NextFuncti
 
   const orderId = +req.params.id
 
-  const response = await UpdateOrder({ orderId, status: req.body.status }, orderRepository)
+  const response = await UpdateOrder({ orderId, status: req.body.status as OrderStatus }, orderRepository)
 
   return res.status(200).json(response)
 })

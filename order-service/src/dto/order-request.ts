@@ -12,7 +12,7 @@ export interface OrderLineItem {
 export interface OrderWithLineItems {
   id?: number
   customerId: number
-  orderId: number
+  orderNumber: number
   transactionId: string | null
   amount: string
   status: string

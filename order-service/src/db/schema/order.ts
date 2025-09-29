@@ -1,13 +1,14 @@
 import { InferSelectModel, relations } from "drizzle-orm";
 import { integer, numeric, pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { OrderStatus } from "~/types/order";
 
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   orderNumber: integer("order_number").notNull().unique(),
   customerId: integer("customer_id").notNull(),
   amount: numeric("amount").notNull(), // in cents
-  status: varchar("status").notNull(),
-  transactionId: varchar("transaction_id").notNull(),
+  status: varchar("status").default(OrderStatus.PENDING),
+  transactionId: varchar("transaction_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })

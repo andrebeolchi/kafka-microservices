@@ -15,6 +15,13 @@
       "when": 1758899676024,
       "tag": "0001_minor_the_initiative",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759178913725,
+      "tag": "0002_wealthy_maria_hill",
+      "breakpoints": true
     }
   ]
 }

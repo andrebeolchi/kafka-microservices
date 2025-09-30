@@ -33,8 +33,8 @@ export const CreateOrder = async (
 
   const orderInput: OrderWithLineItems = {
     orderNumber,
-    transactionId: null,
-    status: OrderStatus.PENDING,
+    transactionId: null, //TODO: payment id from payment service
+    status: OrderStatus.PENDING, // payment status will decide the order status
     customerId,
     amount: cartTotal.toString(),
     orderItems: orderLineItems,

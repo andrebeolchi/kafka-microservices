@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import { CreateProductRequest, UpdateProductRequest } from '~/dto/product'
 import { PrismaCatalogRepository } from '~/repositories/prisma-catalog'
+import { BrokerService } from '~/services/broker'
 import { CatalogService } from '~/services/catalog'
 import { RequestValidator } from '~/utils/request-validator'
 
@@ -8,6 +9,8 @@ const router = Router()
 
 const catalogRepository = new PrismaCatalogRepository()
 export const catalogService = new CatalogService(catalogRepository)
+const brokerService = new BrokerService(catalogService)
+brokerService.initializeBroker()
 
 // endpoints
 

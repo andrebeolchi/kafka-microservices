@@ -1,4 +1,6 @@
+import { OrderWithLineItems } from "~/types/message";
 import { CatalogRepository } from "../interfaces/catalog-repository";
+import { logger } from "~/utils/logger";
 
 export class CatalogService {
   constructor(
@@ -54,5 +56,28 @@ export class CatalogService {
     }
 
     return products
+  }
+
+  async handleBrokerMessage(message: any) {
+    console.log("Received message from broker: ", message)
+    const { orderItems } = message.data as OrderWithLineItems
+
+    const notFoundIds: number[] = []
+
+    orderItems.forEach(async (item) => {
+      console.log("updating stock for item: ", item.productId, item.quantity)
+      const product = await this.getProduct(item.productId)
+      if (!product) {
+        notFoundIds.push(item.productId)
+        return
+      } else {
+        const updatedStock = product.stock - item.quantity
+        await this.updateProduct({ ...product, stock: updatedStock })
+      }
+    })
+
+    if (notFoundIds.length) {
+      logger.warn(`Products not found during stock update for create order: ${notFoundIds.join(", ")}`)
+    }
   }
 }

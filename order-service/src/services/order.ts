@@ -3,6 +3,7 @@ import { CartRepositoryType } from "~/repositories/cart";
 import { OrderRepositoryType } from "~/repositories/order";
 import { OrderStatus } from "~/types/order";
 import { MessageType } from "~/types/subscription";
+import { sendCreateOrderMessage } from "./broker";
 
 export const CreateOrder = async (
   customerId: number,
@@ -15,11 +16,9 @@ export const CreateOrder = async (
     throw new Error('Cart not found')
   }
 
-  // calculate total order amount
   let cartTotal = 0
   let orderLineItems: OrderLineItem[] = []
 
-  // create order line items from cart items
   cart.lineItems.forEach(item => {
     cartTotal += +item.price * item.quantity
     orderLineItems.push({
@@ -32,7 +31,6 @@ export const CreateOrder = async (
 
   const orderNumber = Math.floor(Math.random() * 1000000)
 
-  // create order with line items
   const orderInput: OrderWithLineItems = {
     orderNumber,
     transactionId: null,
@@ -42,14 +40,11 @@ export const CreateOrder = async (
     orderItems: orderLineItems,
   }
 
-  const order = await orderRepository.createOrder(orderInput)
+  const orderId = await orderRepository.createOrder(orderInput)
   await cartRepository.clearCartData(customerId)
-  console.log('Order created: ', order)
 
-  // fire a message to subscription service [catalog service] to update stock
-  // await orderRepository.publishOrderEvent(order, "ORDER_CREATED")
+  await sendCreateOrderMessage({ ...orderInput, id: orderId })
 
-  // return success message
   return { message: 'Order created successfully', orderNumber }
 }
 

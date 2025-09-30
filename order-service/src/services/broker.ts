@@ -6,10 +6,10 @@ import { OrderEvent } from "~/types/subscription"
 
 export const initializeBroker = async () => {
   const producer = await MessageBroker.connectProducer<Producer>()
-  producer.on("producer.connect", async () => logger.info("producer connected successfully"))
+  producer.on("producer.connect", async () => logger.info("order producer connected successfully"))
 
   const consumer = await MessageBroker.connectConsumer<Consumer>()
-  consumer.on("consumer.connect", async () => logger.info("consumer connected successfully"))
+  consumer.on("consumer.connect", async () => logger.info("order consumer connected successfully"))
 
   await MessageBroker.subscribe(HandleSubscription, 'OrderEvents')
 }

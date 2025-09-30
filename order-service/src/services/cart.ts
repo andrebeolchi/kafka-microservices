@@ -52,6 +52,8 @@ export const GetCart = async (id: number, repository: CartRepositoryType) => {
     lineItems.forEach((lineItem) => {
       const stockItem = stockDetails.find((stock) => stock.id === lineItem.productId)
       if (stockItem) {
+        lineItem.price = `${stockItem.price}`
+        lineItem.itemName = stockItem.name
         lineItem.availability = stockItem.stock
       }
     })

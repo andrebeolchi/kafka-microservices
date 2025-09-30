@@ -1,8 +1,11 @@
-import { MessageType, OrderEvent, TOPIC_TYPE } from "~/types/subscription";
+import { CatalogEvent, MessageType, TOPIC_TYPE } from "~/types/broker";
 import { MessageBrokerType, MessageHandler, PublishType } from "./type";
 import { Consumer, Kafka, logLevel, Partitioners, Producer } from "kafkajs";
-import { KAFKA_BROKERS, KAFKA_CLIENT_ID, KAKFA_GROUP_ID } from "~/config";
 import { logger } from "~/utils/logger";
+ 
+const KAFKA_BROKERS = process.env.KAFKA_BROKERS ? process.env.KAFKA_BROKERS.split(",") : ["localhost:9092"]
+const KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID || "catalog-service"
+const KAKFA_GROUP_ID = process.env.KAKFA_GROUP_ID || "catalog-service-group"
 
 const kafka = new Kafka({
   clientId: KAFKA_CLIENT_ID,
@@ -13,7 +16,7 @@ const kafka = new Kafka({
 let producer: Producer
 let consumer: Consumer
 
-const createTopic = async (topicList: string[]) => {
+const createTopic = async (topicList: TOPIC_TYPE[]) => {
   const topics = topicList.map((topic) => ({
     topic,
     numPartitions: 2,
@@ -37,7 +40,7 @@ const createTopic = async (topicList: string[]) => {
 }
 
 const connectProducer = async <T>(): Promise<T> => {
-  await createTopic(["OrderEvents"])
+  await createTopic(["CatalogEvents"])
 
   if (producer) {
     logger.info("Reusing existing Kafka Producer")
@@ -49,7 +52,7 @@ const connectProducer = async <T>(): Promise<T> => {
   })
 
   await producer.connect()
-  logger.info("Kafka Order Producer connected")
+  logger.info("Kafka catalog producer connected")
   return producer as T
 }
 
@@ -104,7 +107,7 @@ const subscribe = async (messageHandler: MessageHandler, topic: TOPIC_TYPE): Pro
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      if (topic !== "OrderEvents") {
+      if (!["CatalogEvents"].includes(topic)) {
         logger.warn(`Received message on unknown topic ${topic}`)
         return
       }
@@ -112,7 +115,7 @@ const subscribe = async (messageHandler: MessageHandler, topic: TOPIC_TYPE): Pro
       if (message.key && message.value) {
         const inputMessage: MessageType = {
           headers: message.headers,
-          event: message.key.toString() as OrderEvent,
+          event: message.key.toString() as CatalogEvent,
           data: message.value ? JSON.parse(message.value.toString()) : null
         }
 

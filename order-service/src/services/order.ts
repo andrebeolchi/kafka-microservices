@@ -1,9 +1,10 @@
-import { OrderLineItem, OrderWithLineItems } from "~/dto/order-request";
+import { InProcessOrder, OrderLineItem, OrderWithLineItems } from "~/dto/order-request";
 import { CartRepositoryType } from "~/repositories/cart";
 import { OrderRepositoryType } from "~/repositories/order";
 import { OrderStatus } from "~/types/order";
 import { MessageType } from "~/types/subscription";
 import { sendCreateOrderMessage } from "./broker";
+import { NotFoundError } from "~/utils/error/errors";
 
 export const CreateOrder = async (
   customerId: number,
@@ -94,4 +95,24 @@ export const HandleSubscription = async (message: MessageType): Promise<void> =>
   console.log('Received message by order kafka consumer ', message)
   // if message.type === 'order.updated' 
   // call update order
+}
+
+export const CheckoutOrder = async (orderId: number, orderRepository: OrderRepositoryType) => {
+  const order = await orderRepository.findOrder(orderId)
+
+  if (!order) {
+    throw new NotFoundError('Order not found')
+  }
+
+  const checkoutOrder: InProcessOrder = {
+    id: order.id,
+    orderNumber: order.orderNumber,
+    status: order.status as OrderStatus,
+    customerId: order.customerId,
+    amount: +order.amount,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
+  }
+
+  return checkoutOrder
 }

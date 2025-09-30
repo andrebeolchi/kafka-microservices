@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express'
 import { requestAuthorizer } from './middleware'
-import { CreateOrder, DeleteOrder, GetOrder, GetOrdersByCustomerId, UpdateOrder } from '~/services/order'
+import { CheckoutOrder, CreateOrder, DeleteOrder, GetOrder, GetOrdersByCustomerId, UpdateOrder } from '~/services/order'
 import { OrderRepository } from '~/repositories/order'
 import { CartRepository } from '~/repositories/cart'
 import { OrderStatus } from '~/types/order'
@@ -74,6 +74,13 @@ router.delete('/orders/:id', requestAuthorizer, async (req: Request, res: Respon
 
   const response = await DeleteOrder(orderId, orderRepository)
 
+  return res.status(200).json(response)
+})
+
+// get checkout details for order
+router.get('/orders/:id/checkout', requestAuthorizer, async (req: Request, res: Response, next: NextFunction) => {
+  const orderId = +req.params.id
+  const response = await CheckoutOrder(orderId, orderRepository)
   return res.status(200).json(response)
 })
 

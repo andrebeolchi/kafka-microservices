@@ -2,6 +2,7 @@ import { OrderLineItem, OrderWithLineItems } from "~/dto/order-request";
 import { CartRepositoryType } from "~/repositories/cart";
 import { OrderRepositoryType } from "~/repositories/order";
 import { OrderStatus } from "~/types/order";
+import { MessageType } from "~/types/subscription";
 
 export const CreateOrder = async (
   customerId: number,
@@ -68,7 +69,7 @@ export const UpdateOrder = async (
 
 export const GetOrder = async (input: { orderId: number, customerId: number }, orderRepository: OrderRepositoryType) => {
   const order = await orderRepository.findOrder(input.orderId)
-  
+
   if (!order || order.customerId !== input.customerId) {
     throw new Error('Order not found')
   }
@@ -94,9 +95,8 @@ export const DeleteOrder = async (orderId: number, orderRepository: OrderReposit
   return true
 }
 
-export const HandleSubscription = async (message: any) => {
+export const HandleSubscription = async (message: MessageType): Promise<void> => {
+  console.log('Received message by order kafka consumer ', message)
   // if message.type === 'order.updated' 
   // call update order
-
-  return {}
 }

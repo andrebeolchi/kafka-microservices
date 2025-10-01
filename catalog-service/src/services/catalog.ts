@@ -59,13 +59,11 @@ export class CatalogService {
   }
 
   async handleBrokerMessage(message: any) {
-    console.log("Received message from broker: ", message)
     const { orderItems } = message.data as OrderWithLineItems
 
     const notFoundIds: number[] = []
 
     orderItems.forEach(async (item) => {
-      console.log("updating stock for item: ", item.productId, item.quantity)
       const product = await this.getProduct(item.productId)
       if (!product) {
         notFoundIds.push(item.productId)

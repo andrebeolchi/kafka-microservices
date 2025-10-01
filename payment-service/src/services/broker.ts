@@ -8,9 +8,9 @@ export const initializeBroker = async () => {
   producer.on("producer.connect", async () => logger.info("payment producer connected successfully"))
 }
 
-export const sendCreatePaymentMessage = async (data: Record<string, unknown>) => {
+export const sendPaymentUpdateMessage = async (data: Record<string, unknown>) => {
   await MessageBroker.publish({
-    event: PaymentEvent.CREATE_PAYMENT,
+    event: PaymentEvent.UPDATE_PAYMENT,
     topic: 'OrderEvents',
     headers: {},
     message: data

@@ -92,13 +92,13 @@ export const DeleteOrder = async (orderId: number, orderRepository: OrderReposit
 }
 
 export const HandleSubscription = async (message: MessageType): Promise<void> => {
-  console.log('Received message by order kafka consumer ', message)
+  console.info('Received message by order kafka consumer ', message)
   // if message.type === 'order.updated' 
   // call update order
 }
 
-export const CheckoutOrder = async (orderId: number, orderRepository: OrderRepositoryType) => {
-  const order = await orderRepository.findOrder(orderId)
+export const CheckoutOrder = async (orderNumber: number, orderRepository: OrderRepositoryType) => {
+  const order = await orderRepository.findOrderByOrderNumber(orderNumber)
 
   if (!order) {
     throw new NotFoundError('Order not found')

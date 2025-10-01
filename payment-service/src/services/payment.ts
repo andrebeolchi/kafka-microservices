@@ -1,43 +1,56 @@
 import { GetOrderDetails } from "~/utils/broker/api"
 import { AuthorizeError } from "~/utils/error/errors"
+import { logger } from "~/utils/logger"
+import { PaymentGateway } from "~/utils/payment/types"
+import { sendPaymentUpdateMessage } from "./broker"
 
 interface CreatePaymentRequest {
   userId: number
   orderNumber: number
-  paymentGateway: unknown
+  paymentGateway: PaymentGateway
 }
 
 export const CreatePayment = async ({ userId, orderNumber, paymentGateway }: CreatePaymentRequest) => {
-  // get order details from order service
   const order = await GetOrderDetails(orderNumber)
-  
+
   if (order.customerId !== userId) {
+    logger.warn(`User ${userId} is not authorized to create payment for order ${orderNumber}`)
     throw new AuthorizeError('User not authorized to create payment')
   }
 
-  
+  const amount = order.amount
+  const metadata = { orderNumber: +order.orderNumber!, userId }
 
-  // create a new payment record
+  const paymentResponse = await paymentGateway.createPayment(amount, metadata)
 
-  // call payment gateway to process payment
-
-  // return payment details
   return {
-    secret: 'my_secret_key',
-    publicKey: 'my_public_key',
-    amount: 1000, // has to be fetched from order service
+    id: paymentResponse.id,
+    secret: paymentResponse.secret,
+    publicKey: paymentResponse.publicKey,
+    amount,
   }
 }
 
 interface VerifyPaymentRequest {
   paymentId: string
-  paymentGateway: unknown
+  paymentGateway: PaymentGateway
 }
 
 export const VerifyPayment = async ({ paymentId, paymentGateway }: VerifyPaymentRequest) => {
-  // call payment gateway to verify payment
+  const { status, orderNumber, paymentLog } = await paymentGateway.getPayment(paymentId)
 
-  // update payment record in database using message broker
+  const response = await sendPaymentUpdateMessage({
+    status,
+    orderNumber,
+    paymentLog,
+  })
 
-  // return payment status
+  logger.info(response, 'Payment update message sent')
+
+  return {
+    message: "Payment verified",
+    status,
+    orderNumber,
+    paymentLog,
+  }
 }

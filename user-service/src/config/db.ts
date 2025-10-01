@@ -6,7 +6,7 @@ const pool = new Pool({
 });
 
 pool.on('connect', () => {
-  console.log('Connected to the database');
+  console.info('Connected to the database');
 });
 
 export const db = {

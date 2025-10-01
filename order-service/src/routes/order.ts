@@ -78,9 +78,9 @@ router.delete('/orders/:id', requestAuthorizer, async (req: Request, res: Respon
 })
 
 // get checkout details for order
-router.get('/orders/:id/checkout', requestAuthorizer, async (req: Request, res: Response, next: NextFunction) => {
-  const orderId = +req.params.id
-  const response = await CheckoutOrder(orderId, orderRepository)
+router.get('/orders/:number/checkout', requestAuthorizer, async (req: Request, res: Response, next: NextFunction) => {
+  const orderNumber = +req.params.number
+  const response = await CheckoutOrder(orderNumber, orderRepository)
   return res.status(200).json(response)
 })
 

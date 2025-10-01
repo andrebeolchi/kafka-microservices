@@ -11,6 +11,7 @@ export interface OrderRepositoryType {
   updateOrder: (id: number, status: OrderStatus) => Promise<OrderWithLineItems>;
   deleteOrder: (id: number) => Promise<Boolean>;
   findOrdersByCustomerId: (customerId: number) => Promise<OrderWithLineItems[]>;
+  findOrderByOrderNumber: (orderNumber: number) => Promise<OrderWithLineItems | null>;
 }
 
 const createOrder = async (lineItems: OrderWithLineItems): Promise<number> => {
@@ -85,10 +86,26 @@ const findOrdersByCustomerId = async (customerId: number): Promise<OrderWithLine
   return orders as unknown as OrderWithLineItems[];
 }
 
+const findOrderByOrderNumber = async (orderNumber: number): Promise<OrderWithLineItems | null> => {
+  const order = await db.query.orders.findFirst({
+    where: (orders, { eq }) => eq(orders.orderNumber, orderNumber),
+    with: {
+      lineItems: true
+    }
+  })
+
+  if (!order) {
+    throw new NotFoundError("Order not found");
+  }
+
+  return order as unknown as OrderWithLineItems;
+}
+
 export const OrderRepository: OrderRepositoryType = {
   createOrder,
   findOrder,
   updateOrder,
   deleteOrder,
-  findOrdersByCustomerId
+  findOrdersByCustomerId,
+  findOrderByOrderNumber
 }

@@ -1,6 +1,7 @@
 import { OrderWithLineItems } from "~/types/message";
 import { CatalogRepository } from "../interfaces/catalog-repository";
 import { logger } from "~/utils/logger";
+import { ElasticSearchEventListener } from "~/utils/elastic-search-event-listener";
 
 export class CatalogService {
   constructor(
@@ -14,6 +15,11 @@ export class CatalogService {
       throw new Error("unable to create product")
     }
 
+    ElasticSearchEventListener.instance.notify({
+      event: "create-product",
+      data: { ...product }
+    })
+
     return product
   }
 
@@ -24,7 +30,10 @@ export class CatalogService {
       throw new Error("unable to update product")
     }
 
-    //TODO - emit event to update record in ElasticSearch
+    ElasticSearchEventListener.instance.notify({
+      event: "update-product",
+      data: { ...product }
+    })
 
     return product
   }
@@ -32,6 +41,7 @@ export class CatalogService {
   //TODO - instead of this, implement a search function that queries ElasticSearch
   async getProducts(limit: number, offset: number) {
     const products = await this._repository.find(limit, offset)
+
     return products
   }
 
@@ -43,7 +53,10 @@ export class CatalogService {
   async deleteProduct(id: number) {
     const deletedId = await this._repository.delete(id)
 
-    //TODO - emit event to delete record in ElasticSearch
+    ElasticSearchEventListener.instance.notify({
+      event: "delete-product",
+      data: { id: deletedId }
+    })
 
     return { id: deletedId }
   }

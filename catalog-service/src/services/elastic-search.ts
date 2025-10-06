@@ -92,7 +92,20 @@ export class ElasticSearchService {
     logger.info(`Product deleted from ElasticSearch: ${id}`)
   }
 
-  async searchProducts(query: string) {
+  async searchProducts(limit: number = 10, offset: number = 0, query: string) {
+    if (!query) {
+      const result = await this.client.search({
+        index: this.indexName,
+        from: offset,
+        size: limit,
+        query: {
+          match_all: {}
+        }
+      })
+
+      return result.hits.hits.map(hit => hit._source)
+    }
+
     const result = await this.client.search({
       index: this.indexName,
       query: {
@@ -100,8 +113,10 @@ export class ElasticSearchService {
           query,
           fields: ['name', 'description'],
           fuzziness: 'AUTO'
-        }
-      }
+        },
+      },
+      from: offset,
+      size: limit
     })
 
     return result.hits.hits.map(hit => hit._source)

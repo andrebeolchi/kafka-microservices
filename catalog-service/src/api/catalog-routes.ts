@@ -12,7 +12,6 @@ export const catalogService = new CatalogService(catalogRepository)
 const brokerService = new BrokerService(catalogService)
 brokerService.initializeBroker()
 
-// endpoints
 
 // Create a new product
 router.post('/products', async (req: Request, res: Response, next: NextFunction) => {
@@ -57,9 +56,10 @@ router.patch('/products/:id', async (req: Request, res: Response, next: NextFunc
 router.get('/products', async (req: Request, res: Response, next: NextFunction) => {
   const limit = Number(req.query['limit']) || 10
   const offset = Number(req.query['offset']) || 0
+  const search = req.query['search']?.toString() || ''
 
   try {
-    const data = await catalogService.getProducts(limit, offset)
+    const data = await catalogService.getProducts(limit, offset, search)
 
     return res.status(200).json(data)
   } catch (error) {

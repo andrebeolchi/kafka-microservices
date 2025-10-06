@@ -2,6 +2,7 @@ import { OrderWithLineItems } from "~/types/message";
 import { CatalogRepository } from "../interfaces/catalog-repository";
 import { logger } from "~/utils/logger";
 import { ElasticSearchEventListener } from "~/utils/elastic-search-event-listener";
+import { ElasticSearchService } from "./elastic-search";
 
 export class CatalogService {
   constructor(
@@ -38,9 +39,9 @@ export class CatalogService {
     return product
   }
 
-  //TODO - instead of this, implement a search function that queries ElasticSearch
-  async getProducts(limit: number, offset: number) {
-    const products = await this._repository.find(limit, offset)
+  async getProducts(limit: number, offset: number, search: string) {
+    const elasticsearch = new ElasticSearchService()
+    const products = await elasticsearch.searchProducts(limit, offset, search)
 
     return products
   }

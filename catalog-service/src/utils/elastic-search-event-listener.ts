@@ -27,7 +27,6 @@ export class ElasticSearchEventListener extends EventEmitter {
 
   listen(instance: ElasticSearchService) {
     this.on(this.eventName, async (payload: EventPayload) => {
-      console.log("Event received: ", payload)
       instance.handleEvents(payload)
     })
   }

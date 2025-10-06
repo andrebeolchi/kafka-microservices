@@ -40,6 +40,48 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+  
+  catalog-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: catalog_db
+      POSTGRES_PASSWORD: catalog_db_password
+      POSTGRES_DB: catalog_service
+    volumes:
+      - ./db-data:/catalog-db/:/var/lib/postgresql/data
+
+  order-db:
+    image: postgres
+    ports:
+      - "5433:5432"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: order_db
+      POSTGRES_PASSWORD: order_db_password
+      POSTGRES_DB: order_service
+    volumes:
+      - ./db-data:/order-db/:/var/lib/postgresql/data
+      
+  user-db:
+    image: postgres
+    ports:
+      - "5434:5432"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: user_db
+      POSTGRES_PASSWORD: user_db_password
+      POSTGRES_DB: user_service
+    volumes:
+      - ./db-data:/user-db/:/var/lib/postgresql/data
 
 volumes:
   esdata:
